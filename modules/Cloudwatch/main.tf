@@ -15,3 +15,8 @@ resource "aws_cloudwatch_log_stream" "orders_firehose_delivery_stream" {
   name           = "${var.app_prefix}-firehose-delivery-stream"
   log_group_name = "${aws_cloudwatch_log_group.orders_firehose_delivery_stream_log_group.name}"
 }
+
+resource "aws_cloudwatch_log_group" "task_log_group" {
+  name              = "/aws/aws_ecs_cluster/${var.app_prefix}/fargatre_scheduling_task"
+  retention_in_days = 30
+}
