@@ -14,6 +14,18 @@ resource "aws_iam_role" "orders_lambda_role" {
   assume_role_policy = "${data.aws_iam_policy_document.AWSLambdaTrustPolicy.json}"
 }
 
+resource "aws_lambda_permission" "apigw_lambda" {
+  statement_id  = "AllowExecutionFromAPIGateway"
+  action        = "lambda:InvokeFunction"
+  function_name = "${aws_lambda_function.lambda_orders.arn}"
+  principal     = "apigateway.amazonaws.com"
+
+  # The /*/*/* part allows invocation from any stage, method and resource path
+  # within API Gateway REST API.
+  source_arn = "${aws_api_gateway_rest_api.orders_api.execution_arn}/*/*/*"
+  depends_on = ["aws_lambda_function.lambda_orders","aws_api_gateway_rest_api.orders_api"]
+}
+
 resource "aws_iam_role_policy_attachment" "orderslambda_policy" {
   role       = aws_iam_role.orders_lambda_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
