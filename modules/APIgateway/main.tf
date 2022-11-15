@@ -92,7 +92,7 @@ resource "aws_apigatewayv2_domain_name" "regional" {
   }
 }
 
-resource "aws_apigatewayv2_api_mapping" "orders" {
+resource "aws_apigatewayv2_api_mapping" "regional" {
   api_id = aws_apigatewayv2_api.orders_api.id
   domain_name = aws_apigatewayv2_domain_name.regional.id
   stage = aws_apigatewayv2_stage.orders.id
@@ -143,16 +143,17 @@ resource "aws_route53_health_check" "health" {
   request_interval  = "30"
 }
 
-resource "aws_api_gateway_domain_name" "global" {
+resource "aws_apigatewayv2_domain_name" "global" {
   domain_name = "${replace(var.global_hostname, "/[.]$/", "")}"
 
-  regional_certificate_arn = "${var.regional_certificate_arn}"
-  endpoint_configuration {
-    types = ["REGIONAL"]
+  domain_name_configuration {
+    certificate_arn = aws_acm_certificate.orders.arn
+    endpoint_type = "REGIONAL"
+    security_policy = "TLS_1_2"
   }
 }
 
-resource "aws_api_gateway_base_path_mapping" "global" {
+resource "aws_apigatewayv2_api_mapping" "global" {
   api_id      = "${aws_apigatewayv2_api.orders_api.id}"
   stage_name  = "${aws_apigatewayv2_deployment.orders_deployment.stage_name}"
   domain_name = "${aws_apigatewayv2_domain_name.global.domain_name}"
