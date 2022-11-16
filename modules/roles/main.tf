@@ -22,8 +22,8 @@ resource "aws_lambda_permission" "apigw_lambda" {
 
   # The /*/*/* part allows invocation from any stage, method and resource path
   # within API Gateway REST API.
-  source_arn = "${aws_api_gateway_rest_api.orders_api.execution_arn}/*/*/*"
-  depends_on = ["aws_lambda_function.lambda_orders","aws_api_gateway_rest_api.orders_api"]
+  source_arn = "${aws_apigatewayv2_api.orders_api.execution_arn}/*/*/*"
+  depends_on = ["aws_lambda_function.lambda_orders","aws_apigatewayv2_api.orders_api"]
 }
 
 resource "aws_iam_role_policy_attachment" "orderslambda_policy" {

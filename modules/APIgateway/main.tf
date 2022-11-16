@@ -82,7 +82,7 @@ resource "aws_acm_certificate" "orders" {
 }
 
 resource "aws_apigatewayv2_domain_name" "regional" {
-  # var.regional_hostname = api-eu.example.com for eu-central-1
+  # var.regional_hostname = api-eu.example.com for eu-west-1
   domain_name = "${replace(var.regional_hostname, "/[.]$/", "")}"
 
   domain_name_configuration {
@@ -134,7 +134,7 @@ resource "aws_route53_record" "balanced" {
 }
 
 resource "aws_route53_health_check" "health" {
-  count             = "${var.aws_region == "eu-central-1" ? length(var.deploy_hostnames) : 0}" # Only deploy it once
+  count             = "${var.aws_region == "eu-west-1" ? length(var.deploy_hostnames) : 0}" # Only deploy it once
   fqdn              = "${element(var.deploy_hostnames, count.index)}"
   type              = "HTTPS"
   port              = "443"
